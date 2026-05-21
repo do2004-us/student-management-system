@@ -48,7 +48,10 @@ $assignedClasses = array_unique(array_column($assignments, 'class_name'));
                 <h1>Welcome, <?= e($teacher['full_name']); ?></h1>
                 <p><?= e($teacher['staff_number']); ?> · <?= e($teacher['qualification'] ?? 'Teacher'); ?></p>
             </div>
-            <a href="../logout.php" class="btn btn-primary">Logout</a>
+            <div class="header-actions">
+                <a href="attendance.php" class="btn btn-light">Attendance</a>
+                <a href="../logout.php" class="btn btn-primary">Logout</a>
+            </div>
         </header>
 
         <section class="stats-grid">

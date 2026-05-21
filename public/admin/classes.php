@@ -50,6 +50,7 @@ $classes = $database
                 <a href="classes.php" class="active">Classes</a>
                 <a href="subjects.php">Subjects</a>
                 <a href="class-subjects.php">Class Subjects</a>
+                <a href="teacher-subjects.php">Teacher Subjects</a>
                 <a href="#">Attendance</a>
                 <a href="#">Results</a>
                 <a href="#">Fees</a>

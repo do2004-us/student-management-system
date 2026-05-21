@@ -48,7 +48,10 @@ $totalResults = (int) $resultCount->fetchColumn();
                 <h1>Welcome, <?= e($student['full_name']); ?></h1>
                 <p><?= e($student['class_name']); ?> · <?= e($student['admission_number']); ?></p>
             </div>
-            <a href="../logout.php" class="btn btn-primary">Logout</a>
+            <div class="header-actions">
+                <a href="attendance.php" class="btn btn-light">Attendance</a>
+                <a href="../logout.php" class="btn btn-primary">Logout</a>
+            </div>
         </header>
 
         <section class="stats-grid">
