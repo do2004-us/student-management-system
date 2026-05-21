@@ -112,6 +112,7 @@ if ($assignmentId > 0) {
                 <h2><?= e($selectedAssignment['class_name'] . ' - ' . $selectedAssignment['subject_name']); ?></h2>
 
                 <form action="save-results.php" method="POST" class="stack-form">
+                    <?= csrf_field(); ?>
                     <input type="hidden" name="assignment_id" value="<?= e((string) $selectedAssignment['id']); ?>">
                     <input type="hidden" name="class_id" value="<?= e((string) $selectedAssignment['class_id']); ?>">
                     <input type="hidden" name="subject_id" value="<?= e((string) $selectedAssignment['subject_id']); ?>">
@@ -165,4 +166,3 @@ if ($assignmentId > 0) {
     </main>
 </body>
 </html>
-

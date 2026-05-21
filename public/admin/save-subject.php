@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/admin/subjects.php');
 }
 
+verify_csrf_token();
+
 $id = (int) ($_POST['id'] ?? 0);
 $subjectName = trim($_POST['subject_name'] ?? '');
 $subjectCode = strtoupper(trim($_POST['subject_code'] ?? ''));
@@ -54,4 +56,3 @@ try {
 }
 
 redirect('/student-management-system/public/admin/subjects.php');
-

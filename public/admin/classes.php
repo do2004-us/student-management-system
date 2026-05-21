@@ -37,27 +37,7 @@ $classes = $database
 </head>
 <body>
     <main class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <span class="brand-mark">SMS</span>
-                <strong>School Admin</strong>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="students.php">Students</a>
-                <a href="teachers.php">Teachers</a>
-                <a href="classes.php" class="active">Classes</a>
-                <a href="subjects.php">Subjects</a>
-                <a href="class-subjects.php">Class Subjects</a>
-                <a href="teacher-subjects.php">Teacher Subjects</a>
-                <a href="terms.php">Terms</a>
-                <a href="#">Attendance</a>
-                <a href="#">Results</a>
-                <a href="fees.php">Fees</a>
-                <a href="reports.php">Reports</a>
-            </nav>
-        </aside>
+        <?php require __DIR__ . '/../../app/Views/layouts/admin-sidebar.php'; ?>
 
         <section class="main-area">
             <header class="topbar">
@@ -83,6 +63,7 @@ $classes = $database
                 <article class="content-panel">
                     <h2><?= $editClass ? 'Edit Class' : 'Add Class'; ?></h2>
                     <form action="save-class.php" method="POST" class="stack-form">
+                        <?= csrf_field(); ?>
                         <input type="hidden" name="id" value="<?= e((string) ($editClass['id'] ?? '')); ?>">
 
                         <div class="form-group">
@@ -135,6 +116,7 @@ $classes = $database
                                         <td class="table-actions">
                                             <a href="classes.php?edit=<?= e((string) $class['id']); ?>">Edit</a>
                                             <form action="delete-class.php" method="POST">
+                                                <?= csrf_field(); ?>
                                                 <input type="hidden" name="id" value="<?= e((string) $class['id']); ?>">
                                                 <button type="submit">Delete</button>
                                             </form>

@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/admin/fees.php');
 }
 
+verify_csrf_token();
+
 $feeId = (int) ($_POST['fee_id'] ?? 0);
 $studentId = (int) ($_POST['student_id'] ?? 0);
 $amountPaid = (float) ($_POST['amount_paid'] ?? 0);
@@ -75,4 +77,3 @@ try {
 }
 
 redirect('/student-management-system/public/admin/payments.php?fee_id=' . $feeId);
-

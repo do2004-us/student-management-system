@@ -32,6 +32,7 @@ unset($_SESSION['login_error']);
             <?php endif; ?>
 
             <form action="process-login.php" method="POST" class="auth-form">
+                <?= csrf_field(); ?>
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input
@@ -62,4 +63,3 @@ unset($_SESSION['login_error']);
     </main>
 </body>
 </html>
-

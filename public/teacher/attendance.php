@@ -99,6 +99,7 @@ if ($selectedClassId > 0) {
                 <h2>Student Attendance</h2>
 
                 <form action="save-attendance.php" method="POST" class="stack-form">
+                    <?= csrf_field(); ?>
                     <input type="hidden" name="class_id" value="<?= e((string) $selectedClassId); ?>">
                     <input type="hidden" name="attendance_date" value="<?= e($attendanceDate); ?>">
 
@@ -151,4 +152,3 @@ if ($selectedClassId > 0) {
     </main>
 </body>
 </html>
-

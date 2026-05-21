@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/admin/terms.php');
 }
 
+verify_csrf_token();
+
 $id = (int) ($_POST['id'] ?? 0);
 $termName = trim($_POST['term_name'] ?? '');
 $academicYear = trim($_POST['academic_year'] ?? '');
@@ -75,4 +77,3 @@ try {
 }
 
 redirect('/student-management-system/public/admin/terms.php');
-

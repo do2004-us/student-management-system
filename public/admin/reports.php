@@ -47,27 +47,7 @@ $classSummary = $database
 </head>
 <body>
     <main class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <span class="brand-mark">SMS</span>
-                <strong>School Admin</strong>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="students.php">Students</a>
-                <a href="teachers.php">Teachers</a>
-                <a href="classes.php">Classes</a>
-                <a href="subjects.php">Subjects</a>
-                <a href="class-subjects.php">Class Subjects</a>
-                <a href="teacher-subjects.php">Teacher Subjects</a>
-                <a href="terms.php">Terms</a>
-                <a href="#">Attendance</a>
-                <a href="#">Results</a>
-                <a href="fees.php">Fees</a>
-                <a href="reports.php" class="active">Reports</a>
-            </nav>
-        </aside>
+        <?php require __DIR__ . '/../../app/Views/layouts/admin-sidebar.php'; ?>
 
         <section class="main-area">
             <header class="topbar">
@@ -183,4 +163,3 @@ $classSummary = $database
     </main>
 </body>
 </html>
-

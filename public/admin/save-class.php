@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/admin/classes.php');
 }
 
+verify_csrf_token();
+
 $id = (int) ($_POST['id'] ?? 0);
 $className = trim($_POST['class_name'] ?? '');
 
@@ -45,4 +47,3 @@ try {
 }
 
 redirect('/student-management-system/public/admin/classes.php');
-

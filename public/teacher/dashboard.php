@@ -51,6 +51,8 @@ $assignedClasses = array_unique(array_column($assignments, 'class_name'));
             <div class="header-actions">
                 <a href="attendance.php" class="btn btn-light">Attendance</a>
                 <a href="results.php" class="btn btn-light">Results</a>
+                <a href="../notifications.php" class="btn btn-light">Notifications</a>
+                <a href="../change-password.php" class="btn btn-light">Password</a>
                 <a href="../logout.php" class="btn btn-primary">Logout</a>
             </div>
         </header>

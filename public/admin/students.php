@@ -81,27 +81,7 @@ $students = $studentStatement->fetchAll();
 </head>
 <body>
     <main class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <span class="brand-mark">SMS</span>
-                <strong>School Admin</strong>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="students.php" class="active">Students</a>
-                <a href="teachers.php">Teachers</a>
-                <a href="classes.php">Classes</a>
-                <a href="subjects.php">Subjects</a>
-                <a href="class-subjects.php">Class Subjects</a>
-                <a href="teacher-subjects.php">Teacher Subjects</a>
-                <a href="terms.php">Terms</a>
-                <a href="#">Attendance</a>
-                <a href="#">Results</a>
-                <a href="fees.php">Fees</a>
-                <a href="reports.php">Reports</a>
-            </nav>
-        </aside>
+        <?php require __DIR__ . '/../../app/Views/layouts/admin-sidebar.php'; ?>
 
         <section class="main-area">
             <header class="topbar">
@@ -127,6 +107,7 @@ $students = $studentStatement->fetchAll();
                 <article class="content-panel">
                     <h2><?= $editStudent ? 'Edit Student' : 'Add Student'; ?></h2>
                     <form action="save-student.php" method="POST" class="stack-form">
+                        <?= csrf_field(); ?>
                         <input type="hidden" name="id" value="<?= e((string) ($editStudent['id'] ?? '')); ?>">
 
                         <div class="form-grid">
@@ -257,6 +238,7 @@ $students = $studentStatement->fetchAll();
                                         <td class="table-actions">
                                             <a href="students.php?edit=<?= e((string) $student['id']); ?>">Edit</a>
                                             <form action="delete-student.php" method="POST">
+                                                <?= csrf_field(); ?>
                                                 <input type="hidden" name="id" value="<?= e((string) $student['id']); ?>">
                                                 <button type="submit">Delete</button>
                                             </form>

@@ -42,27 +42,7 @@ $assignments = $database
 </head>
 <body>
     <main class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <span class="brand-mark">SMS</span>
-                <strong>School Admin</strong>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="students.php">Students</a>
-                <a href="teachers.php">Teachers</a>
-                <a href="classes.php">Classes</a>
-                <a href="subjects.php">Subjects</a>
-                <a href="class-subjects.php">Class Subjects</a>
-                <a href="teacher-subjects.php" class="active">Teacher Subjects</a>
-                <a href="terms.php">Terms</a>
-                <a href="#">Attendance</a>
-                <a href="#">Results</a>
-                <a href="fees.php">Fees</a>
-                <a href="reports.php">Reports</a>
-            </nav>
-        </aside>
+        <?php require __DIR__ . '/../../app/Views/layouts/admin-sidebar.php'; ?>
 
         <section class="main-area">
             <header class="topbar">
@@ -88,6 +68,7 @@ $assignments = $database
                 <article class="content-panel">
                     <h2>Assign Teacher</h2>
                     <form action="save-teacher-subject.php" method="POST" class="stack-form">
+                        <?= csrf_field(); ?>
                         <div class="form-group">
                             <label for="teacher_id">Teacher</label>
                             <select id="teacher_id" name="teacher_id" required>
@@ -157,6 +138,7 @@ $assignments = $database
                                         <td><?= e($assignment['subject_name'] . ' (' . $assignment['subject_code'] . ')'); ?></td>
                                         <td class="table-actions">
                                             <form action="delete-teacher-subject.php" method="POST">
+                                                <?= csrf_field(); ?>
                                                 <input type="hidden" name="id" value="<?= e((string) $assignment['id']); ?>">
                                                 <button type="submit">Remove</button>
                                             </form>

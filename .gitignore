@@ -1,0 +1,26 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Local environment files
+.env
+
+# Logs and generated files
+storage/logs/*
+storage/reports/*
+!storage/logs/.gitkeep
+!storage/reports/.gitkeep
+
+# Uploaded files
+public/uploads/students/*
+public/uploads/teachers/*
+!public/uploads/students/.gitkeep
+!public/uploads/teachers/.gitkeep
+
+# Temporary setup files
+public/reset-admin-password.php
+

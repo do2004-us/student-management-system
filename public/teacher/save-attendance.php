@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/teacher/attendance.php');
 }
 
+verify_csrf_token();
+
 $classId = (int) ($_POST['class_id'] ?? 0);
 $attendanceDate = $_POST['attendance_date'] ?? date('Y-m-d');
 $attendanceRows = $_POST['attendance'] ?? [];
@@ -55,4 +57,3 @@ try {
 }
 
 redirect('/student-management-system/public/teacher/attendance.php?class_id=' . $classId . '&attendance_date=' . urlencode($attendanceDate));
-

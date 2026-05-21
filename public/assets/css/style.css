@@ -133,8 +133,18 @@ select {
     background: #ffffff;
 }
 
+textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font: inherit;
+    resize: vertical;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: 3px solid rgba(16, 185, 129, 0.2);
     border-color: var(--accent);
 }
@@ -466,6 +476,10 @@ th {
     grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
     gap: 16px;
     align-items: end;
+}
+
+.filter-form-wide {
+    grid-template-columns: repeat(4, minmax(150px, 1fr)) auto;
 }
 
 .search-form {

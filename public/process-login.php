@@ -7,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/student-management-system/public/login.php');
 }
 
+verify_csrf_token();
+
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
@@ -59,9 +61,12 @@ try {
         redirect('/student-management-system/public/teacher/dashboard.php');
     }
 
+    if ($user['role'] === 'parent') {
+        redirect('/student-management-system/public/parent/dashboard.php');
+    }
+
     redirect('/student-management-system/public/student/dashboard.php');
 } catch (PDOException $exception) {
     $_SESSION['login_error'] = 'Login failed. Please try again later.';
     redirect('/student-management-system/public/login.php');
 }
-

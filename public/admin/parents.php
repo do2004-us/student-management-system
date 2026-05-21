@@ -19,19 +19,16 @@ $students = $database
              ORDER BY users.full_name ASC')
     ->fetchAll();
 
-$terms = $database->query('SELECT * FROM academic_terms ORDER BY id DESC')->fetchAll();
-
-$fees = $database
-    ->query('SELECT fees.*, users.full_name, students.admission_number,
-                    academic_terms.term_name, academic_terms.academic_year,
-                    COALESCE(SUM(payments.amount_paid), 0) AS paid_amount
-             FROM fees
-             INNER JOIN students ON students.id = fees.student_id
-             INNER JOIN users ON users.id = students.user_id
-             INNER JOIN academic_terms ON academic_terms.id = fees.term_id
-             LEFT JOIN payments ON payments.fee_id = fees.id
-             GROUP BY fees.id
-             ORDER BY fees.created_at DESC')
+$parents = $database
+    ->query('SELECT parents.id, parents.occupation, users.full_name, users.email, users.phone,
+                    GROUP_CONCAT(CONCAT(student_user.full_name, " (", parent_students.relationship, ")") SEPARATOR ", ") AS children
+             FROM parents
+             INNER JOIN users ON users.id = parents.user_id
+             LEFT JOIN parent_students ON parent_students.parent_id = parents.id
+             LEFT JOIN students ON students.id = parent_students.student_id
+             LEFT JOIN users AS student_user ON student_user.id = students.user_id
+             GROUP BY parents.id
+             ORDER BY users.full_name ASC')
     ->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -39,8 +36,9 @@ $fees = $database
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Fees - <?= e(app_config('app_name')); ?></title>
+    <title>Manage Parents - <?= e(app_config('app_name')); ?></title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/premium-dashboard.css">
 </head>
 <body>
     <main class="app-layout">
@@ -48,9 +46,10 @@ $fees = $database
 
         <section class="main-area">
             <header class="topbar">
+                <button type="button" class="icon-btn" data-mobile-nav aria-label="Open navigation">☰</button>
                 <div>
                     <p class="eyebrow">Admin Portal</p>
-                    <h1>Manage Fees</h1>
+                    <h1>Manage Parents</h1>
                 </div>
                 <div class="topbar-user">
                     <span><?= e(current_user()['full_name']); ?></span>
@@ -68,11 +67,32 @@ $fees = $database
 
             <section class="management-grid">
                 <article class="content-panel">
-                    <h2>Assign Fee</h2>
-                    <form action="save-fee.php" method="POST" class="stack-form">
+                    <h2>Add Parent</h2>
+                    <form action="save-parent.php" method="POST" class="stack-form">
                         <?= csrf_field(); ?>
+
                         <div class="form-group">
-                            <label for="student_id">Student</label>
+                            <label for="full_name">Full Name</label>
+                            <input type="text" id="full_name" name="full_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="text" id="phone" name="phone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" minlength="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="student_id">Linked Student</label>
                             <select id="student_id" name="student_id" required>
                                 <option value="">Select student</option>
                                 <?php foreach ($students as $student): ?>
@@ -84,65 +104,51 @@ $fees = $database
                         </div>
 
                         <div class="form-group">
-                            <label for="term_id">Term</label>
-                            <select id="term_id" name="term_id" required>
-                                <option value="">Select term</option>
-                                <?php foreach ($terms as $term): ?>
-                                    <option value="<?= e((string) $term['id']); ?>">
-                                        <?= e($term['term_name'] . ' ' . $term['academic_year']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label for="relationship">Relationship</label>
+                            <input type="text" id="relationship" name="relationship" value="Guardian" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="amount_due">Amount Due</label>
-                            <input type="number" id="amount_due" name="amount_due" min="0" step="0.01" required>
+                            <label for="occupation">Occupation</label>
+                            <input type="text" id="occupation" name="occupation">
                         </div>
 
                         <div class="form-group">
-                            <label for="due_date">Due Date</label>
-                            <input type="date" id="due_date" name="due_date">
+                            <label for="address">Address</label>
+                            <textarea id="address" name="address" rows="3"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Save Fee</button>
+                        <button type="submit" class="btn btn-primary">Save Parent</button>
                     </form>
                 </article>
 
                 <article class="content-panel">
-                    <h2>Fee Records</h2>
-
+                    <h2>Parent List</h2>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Student</th>
-                                    <th>Term</th>
-                                    <th>Due</th>
-                                    <th>Paid</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Children</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if (!$fees): ?>
+                                <?php if (!$parents): ?>
                                     <tr>
-                                        <td colspan="7">No fee records found.</td>
+                                        <td colspan="5">No parents found.</td>
                                     </tr>
                                 <?php endif; ?>
 
-                                <?php foreach ($fees as $index => $fee): ?>
+                                <?php foreach ($parents as $index => $parent): ?>
                                     <tr>
                                         <td><?= e((string) ($index + 1)); ?></td>
-                                        <td><?= e($fee['full_name']); ?></td>
-                                        <td><?= e($fee['term_name'] . ' ' . $fee['academic_year']); ?></td>
-                                        <td><?= e(number_format((float) $fee['amount_due'], 2)); ?></td>
-                                        <td><?= e(number_format((float) $fee['paid_amount'], 2)); ?></td>
-                                        <td><?= e(ucfirst(str_replace('_', ' ', $fee['status']))); ?></td>
-                                        <td class="table-actions">
-                                            <a href="payments.php?fee_id=<?= e((string) $fee['id']); ?>">Payment</a>
-                                        </td>
+                                        <td><?= e($parent['full_name']); ?></td>
+                                        <td><?= e($parent['email']); ?></td>
+                                        <td><?= e($parent['phone'] ?? ''); ?></td>
+                                        <td><?= e($parent['children'] ?? 'No linked student'); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -152,5 +158,7 @@ $fees = $database
             </section>
         </section>
     </main>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>
+

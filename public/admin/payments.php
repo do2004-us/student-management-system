@@ -69,6 +69,7 @@ $payments = $paymentStatement->fetchAll();
             <article class="content-panel">
                 <h2>Add Payment</h2>
                 <form action="save-payment.php" method="POST" class="stack-form">
+                    <?= csrf_field(); ?>
                     <input type="hidden" name="fee_id" value="<?= e((string) $fee['id']); ?>">
                     <input type="hidden" name="student_id" value="<?= e((string) $fee['student_id']); ?>">
 
@@ -138,4 +139,3 @@ $payments = $paymentStatement->fetchAll();
     </main>
 </body>
 </html>
-
