@@ -12,6 +12,10 @@ $error = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
 
 $editTeacher = null;
+$search = trim($_GET['search'] ?? '');
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$perPage = 10;
+$offset = ($page - 1) * $perPage;
 
 if (isset($_GET['edit'])) {
     $statement = $database->prepare(
@@ -25,12 +29,44 @@ if (isset($_GET['edit'])) {
     $editTeacher = $statement->fetch();
 }
 
-$teachers = $database
-    ->query('SELECT teachers.*, users.full_name, users.email, users.phone, users.status
-             FROM teachers
-             INNER JOIN users ON users.id = teachers.user_id
-             ORDER BY users.full_name ASC')
-    ->fetchAll();
+$whereSql = '';
+$params = [];
+
+if ($search !== '') {
+    $whereSql = 'WHERE users.full_name LIKE :search
+                 OR users.email LIKE :search
+                 OR teachers.staff_number LIKE :search
+                 OR users.phone LIKE :search';
+    $params['search'] = '%' . $search . '%';
+}
+
+$countStatement = $database->prepare(
+    "SELECT COUNT(*)
+     FROM teachers
+     INNER JOIN users ON users.id = teachers.user_id
+     $whereSql"
+);
+$countStatement->execute($params);
+$totalTeachers = (int) $countStatement->fetchColumn();
+$totalPages = max(1, (int) ceil($totalTeachers / $perPage));
+
+$teacherStatement = $database->prepare(
+    "SELECT teachers.*, users.full_name, users.email, users.phone, users.status
+     FROM teachers
+     INNER JOIN users ON users.id = teachers.user_id
+     $whereSql
+     ORDER BY users.full_name ASC
+     LIMIT :limit OFFSET :offset"
+);
+
+foreach ($params as $key => $value) {
+    $teacherStatement->bindValue(':' . $key, $value);
+}
+
+$teacherStatement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+$teacherStatement->bindValue(':offset', $offset, PDO::PARAM_INT);
+$teacherStatement->execute();
+$teachers = $teacherStatement->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,10 +92,11 @@ $teachers = $database
                 <a href="subjects.php">Subjects</a>
                 <a href="class-subjects.php">Class Subjects</a>
                 <a href="teacher-subjects.php">Teacher Subjects</a>
+                <a href="terms.php">Terms</a>
                 <a href="#">Attendance</a>
                 <a href="#">Results</a>
-                <a href="#">Fees</a>
-                <a href="#">Reports</a>
+                <a href="fees.php">Fees</a>
+                <a href="reports.php">Reports</a>
             </nav>
         </aside>
 
@@ -156,6 +193,14 @@ $teachers = $database
                 <article class="content-panel">
                     <h2>Teacher List</h2>
 
+                    <form method="GET" action="teachers.php" class="search-form">
+                        <input type="text" name="search" placeholder="Search teachers..." value="<?= e($search); ?>">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <?php if ($search !== ''): ?>
+                            <a href="teachers.php" class="text-link">Clear</a>
+                        <?php endif; ?>
+                    </form>
+
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -178,7 +223,7 @@ $teachers = $database
 
                                 <?php foreach ($teachers as $index => $teacher): ?>
                                     <tr>
-                                        <td><?= e((string) ($index + 1)); ?></td>
+                                        <td><?= e((string) ($offset + $index + 1)); ?></td>
                                         <td><?= e($teacher['full_name']); ?></td>
                                         <td><?= e($teacher['email']); ?></td>
                                         <td><?= e($teacher['staff_number']); ?></td>
@@ -195,6 +240,17 @@ $teachers = $database
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="pagination">
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a
+                                href="teachers.php?page=<?= e((string) $i); ?>&search=<?= e(urlencode($search)); ?>"
+                                class="<?= $i === $page ? 'active' : ''; ?>"
+                            >
+                                <?= e((string) $i); ?>
+                            </a>
+                        <?php endfor; ?>
                     </div>
                 </article>
             </section>

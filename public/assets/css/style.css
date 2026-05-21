@@ -322,6 +322,16 @@ select:focus {
     gap: 16px;
 }
 
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-row input {
+    width: auto;
+}
+
 .stack-form {
     display: grid;
     gap: 16px;
@@ -458,6 +468,52 @@ th {
     align-items: end;
 }
 
+.search-form {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    color: var(--primary);
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    color: #ffffff;
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.report-grid .content-panel:first-child {
+    grid-column: 1 / -1;
+}
+
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -550,6 +606,14 @@ th {
     }
 
     .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .report-grid {
         grid-template-columns: 1fr;
     }
 }

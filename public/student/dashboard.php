@@ -50,6 +50,8 @@ $totalResults = (int) $resultCount->fetchColumn();
             </div>
             <div class="header-actions">
                 <a href="attendance.php" class="btn btn-light">Attendance</a>
+                <a href="results.php" class="btn btn-light">Results</a>
+                <a href="fees.php" class="btn btn-light">Fees</a>
                 <a href="../logout.php" class="btn btn-primary">Logout</a>
             </div>
         </header>

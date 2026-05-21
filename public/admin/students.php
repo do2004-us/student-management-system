@@ -12,6 +12,10 @@ $error = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
 
 $editStudent = null;
+$search = trim($_GET['search'] ?? '');
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$perPage = 10;
+$offset = ($page - 1) * $perPage;
 
 if (isset($_GET['edit'])) {
     $statement = $database->prepare(
@@ -26,13 +30,46 @@ if (isset($_GET['edit'])) {
 }
 
 $classes = $database->query('SELECT * FROM classes ORDER BY class_name ASC')->fetchAll();
-$students = $database
-    ->query('SELECT students.*, users.full_name, users.email, users.phone, users.status, classes.class_name
-             FROM students
-             INNER JOIN users ON users.id = students.user_id
-             INNER JOIN classes ON classes.id = students.class_id
-             ORDER BY users.full_name ASC')
-    ->fetchAll();
+$whereSql = '';
+$params = [];
+
+if ($search !== '') {
+    $whereSql = 'WHERE users.full_name LIKE :search
+                 OR users.email LIKE :search
+                 OR students.admission_number LIKE :search
+                 OR classes.class_name LIKE :search';
+    $params['search'] = '%' . $search . '%';
+}
+
+$countStatement = $database->prepare(
+    "SELECT COUNT(*)
+     FROM students
+     INNER JOIN users ON users.id = students.user_id
+     INNER JOIN classes ON classes.id = students.class_id
+     $whereSql"
+);
+$countStatement->execute($params);
+$totalStudents = (int) $countStatement->fetchColumn();
+$totalPages = max(1, (int) ceil($totalStudents / $perPage));
+
+$studentStatement = $database->prepare(
+    "SELECT students.*, users.full_name, users.email, users.phone, users.status, classes.class_name
+     FROM students
+     INNER JOIN users ON users.id = students.user_id
+     INNER JOIN classes ON classes.id = students.class_id
+     $whereSql
+     ORDER BY users.full_name ASC
+     LIMIT :limit OFFSET :offset"
+);
+
+foreach ($params as $key => $value) {
+    $studentStatement->bindValue(':' . $key, $value);
+}
+
+$studentStatement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+$studentStatement->bindValue(':offset', $offset, PDO::PARAM_INT);
+$studentStatement->execute();
+$students = $studentStatement->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,10 +95,11 @@ $students = $database
                 <a href="subjects.php">Subjects</a>
                 <a href="class-subjects.php">Class Subjects</a>
                 <a href="teacher-subjects.php">Teacher Subjects</a>
+                <a href="terms.php">Terms</a>
                 <a href="#">Attendance</a>
                 <a href="#">Results</a>
-                <a href="#">Fees</a>
-                <a href="#">Reports</a>
+                <a href="fees.php">Fees</a>
+                <a href="reports.php">Reports</a>
             </nav>
         </aside>
 
@@ -180,6 +218,14 @@ $students = $database
                 <article class="content-panel">
                     <h2>Student List</h2>
 
+                    <form method="GET" action="students.php" class="search-form">
+                        <input type="text" name="search" placeholder="Search students..." value="<?= e($search); ?>">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <?php if ($search !== ''): ?>
+                            <a href="students.php" class="text-link">Clear</a>
+                        <?php endif; ?>
+                    </form>
+
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -202,7 +248,7 @@ $students = $database
 
                                 <?php foreach ($students as $index => $student): ?>
                                     <tr>
-                                        <td><?= e((string) ($index + 1)); ?></td>
+                                        <td><?= e((string) ($offset + $index + 1)); ?></td>
                                         <td><?= e($student['full_name']); ?></td>
                                         <td><?= e($student['email']); ?></td>
                                         <td><?= e($student['admission_number']); ?></td>
@@ -219,6 +265,17 @@ $students = $database
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="pagination">
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a
+                                href="students.php?page=<?= e((string) $i); ?>&search=<?= e(urlencode($search)); ?>"
+                                class="<?= $i === $page ? 'active' : ''; ?>"
+                            >
+                                <?= e((string) $i); ?>
+                            </a>
+                        <?php endfor; ?>
                     </div>
                 </article>
             </section>

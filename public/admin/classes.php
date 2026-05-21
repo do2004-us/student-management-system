@@ -51,10 +51,11 @@ $classes = $database
                 <a href="subjects.php">Subjects</a>
                 <a href="class-subjects.php">Class Subjects</a>
                 <a href="teacher-subjects.php">Teacher Subjects</a>
+                <a href="terms.php">Terms</a>
                 <a href="#">Attendance</a>
                 <a href="#">Results</a>
-                <a href="#">Fees</a>
-                <a href="#">Reports</a>
+                <a href="fees.php">Fees</a>
+                <a href="reports.php">Reports</a>
             </nav>
         </aside>
 
